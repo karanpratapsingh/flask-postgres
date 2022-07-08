@@ -1,0 +1,94 @@
+{
+	"info": {
+		"_postman_id": "579d63d1-2682-4c2b-93d9-b339f401f843",
+		"name": "Flask postgres",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Hello world",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000",
+					"host": [
+						"localhost"
+					],
+					"port": "5000"
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all builds",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/v1/builds",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"v1",
+						"builds"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get build by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/v1/builds/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"v1",
+						"builds",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add a build",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "version",
+							"value": "1.0",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:5000/v1/builds",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"v1",
+						"builds"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

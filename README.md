@@ -8,7 +8,7 @@ $ make dev
 
 ## See database
 
-Open port `localhost:8080` and login with server as `postgres` (no `host.docker.internal` as our db viewer container is in the same docker network)
+Open table plus and connect with host as `localhost` and creds from `.env`
 
 ## Start fresh
 

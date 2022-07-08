@@ -1,8 +1,10 @@
 import os
-from flask import Flask
+from dataclasses import dataclass
+
 from dotenv import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify, request
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
 # Environment setup
 load_dotenv()
@@ -46,6 +48,7 @@ migrate = Migrate(app, db)
 # Setup models
 
 
+@dataclass
 class AppleBuild(db.Model):
     build_id = db.Column(db.Integer, primary_key=True)
     version = db.Column(db.String(50))
@@ -56,33 +59,49 @@ def __init__(self, build_id, version):
     self.version = version
 
 
-# Only creates tables initially, use Flask migrate when updating table information
+# Only creates tables initially, use Flask migrate when updating schema
 # Ref: https://flask-migrate.readthedocs.io/en/latest/
 db.create_all()
 
 
-@app.route('/v1/builds', methods = ['GET'])
+@app.route('/')
+def hello_world():
+    return 'Hello world!'
+
+
+@app.route('/v1/builds', methods=['GET'])
 def get_all_builds():
     # Query: https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_using_query.htm
-    all = db.session.query(AppleBuild).all()
-    return all
+    all = AppleBuild.query.all()
+    return jsonify(builds=[{'build_id': build.build_id, 'version': build.version} for build in all])
 
-@app.route('/v1/builds/<build_id>', methods = ['GET'])
+
+@app.route('/v1/builds/<build_id>', methods=['GET'])
 def get_build(build_id):
-    build = db.session.query(AppleBuild).first(build_id=build_id)
-    return build
+    build = AppleBuild.query.filter_by(build_id=build_id).first()
 
-@app.route('/v1/builds', methods = ['POST'])
+    if not build:
+        return jsonify(error=f'Build with id: {build_id} not found')
+    return jsonify(build_id=build.build_id, version=build.version)
+
+
+@app.route('/v1/builds', methods=['POST'])
 def add_build():
-    build_id = request.form.get('build_id')
+    # Get value from the POST request (Form data)
     version = request.form.get('version')
 
-    new_build = AppleBuild(build_id, version)
+    if not version:
+        return jsonify(error='version is required')
+
+    # We don't need to explicitly give id as it's auto-incremented
+    new_build = AppleBuild(version=version)
+
+    # Add new changes to the database
     db.session.add(new_build)
     db.session.commit()
 
-    return new_build
+    return jsonify(build_id=new_build.build_id, version=new_build.version)
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0")
